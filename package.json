@@ -1,0 +1,17 @@
+{
+  "name": "ConectaRedeCard",
+  "version": "0.0.1",
+  "description": "Plugin para mandar pagamentos para aplicativo da RedeCard",
+  "cordova": {
+    "id": "cordova-plugin-conecta-rede-card",
+    "platforms": [
+      "android"
+    ]
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "author": "Grands Informatica",
+  "license": "ISC"
+}
