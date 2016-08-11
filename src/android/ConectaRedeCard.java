@@ -1,4 +1,4 @@
-package cordova.plugin.conectaredecard;
+package br.com.grands.cordova.plugin;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -22,14 +22,15 @@ import java.text.NumberFormat;
 
 import rede.smartrede.sdk.Intents;
 import rede.smartrede.sdk.Payment;
+import rede.smartrede.sdk.PaymentStatus;
 
 /**
  * Created by gelatti on 10/08/16.
  */
 public class ConectaRedeCard extends CordovaPlugin {
 
-    private static final String TAG = "RedeCard";
-    private static final String LAUNCH_PAYMENT = "launchPayment";
+    private static final String TAG = "ConectaRedeCard";
+    private static final String LAUNCH_PAYMENT = "lancaPagamento";
     private CallbackContext callbackContext;
     private JSONArray executeArgs;
 
@@ -79,14 +80,14 @@ public class ConectaRedeCard extends CordovaPlugin {
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         if (requestCode == COLLECT_PAYMENT_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
-                if (data!=null) {
+                if (data != null) {
                     Payment payment = data.getParcelableExtra(Intents.INTENT_EXTRAS_PAYMENT);
                     Gson gson = new GsonBuilder().setPrettyPrinting().create();
                     Type paymentType = new TypeToken<Payment>(){}.getType();
                     String paymentResult = gson.toJson(payment, paymentType);
                     this.callbackContext.success(paymentResult);
                     return;
-                }else{
+                } else {
                     callbackContext.error(getNoReturn());
                     return;
                 }

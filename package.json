@@ -1,17 +1,27 @@
 {
   "name": "ConectaRedeCard",
   "version": "0.0.1",
-  "description": "Plugin para mandar pagamentos para aplicativo da RedeCard",
+  "description": "Plugin do cordova para comunicação com o app de pagamentos da RedeCard",
   "cordova": {
-    "id": "cordova-plugin-conecta-rede-card",
+    "id": "cordova-plugin-conectaredecard",
     "platforms": [
       "android"
     ]
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grandssistemas/ConectaRedeCard.git"
+  },
   "keywords": [
     "ecosystem:cordova",
-    "cordova-android"
+    "cordova-android",
+    "poynt",
+    "redecard"
   ],
-  "author": "Grands Informatica",
-  "license": "ISC"
+  "author": "Grands Sistemas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/grandssistemas/ConectaRedeCard/issues"
+  },
+  "homepage": "https://github.com/grandssistemas/ConectaRedeCard#readme"
 }

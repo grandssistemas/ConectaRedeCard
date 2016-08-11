@@ -1,14 +1,14 @@
-var RedeCard = {
-	launchPayment: function (amount, referenceId, successCallback, errorCallback){
-		cordova.exec(successCallback, 
-			errorCallback, 
-			'RedeCard', 
-			'launchPayment', 
+var ConectaRedeCard = {
+	lancaPagamento: function (amount, referenceId, successCallback, errorCallback){
+		cordova.exec(successCallback,
+			errorCallback,
+			'ConectaRedeCard',
+			'lancaPagamento',
 			[{
-				"amount": amount, 
+				"amount": amount,
 				"referenceId": referenceId
 			}]);
 	}
 }
 
- module.exports = RedeCard;
+module.exports = ConectaRedeCard;
