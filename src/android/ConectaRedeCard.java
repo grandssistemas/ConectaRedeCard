@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaActivity;
 import org.apache.cordova.CordovaPlugin;
@@ -16,10 +14,8 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.lang.reflect.Type;
-import java.text.NumberFormat;
-
+import rede.smartrede.sdk.FlexTipoPagamento;
 import rede.smartrede.sdk.Intents;
 import rede.smartrede.sdk.Payment;
 import rede.smartrede.sdk.PaymentStatus;
@@ -34,14 +30,6 @@ public class ConectaRedeCard extends CordovaPlugin {
     private CallbackContext callbackContext;
     private JSONArray executeArgs;
 
-    public static final int UNKNOWN_ERROR = 0;
-    public static final int INVALID_ARGUMENT_ERROR = 1;
-    public static final int TIMEOUT_ERROR = 2;
-    public static final int PENDING_OPERATION_ERROR = 3;
-    public static final int IO_ERROR = 4;
-    public static final int NOT_SUPPORTED_ERROR = 5;
-    public static final int OPERATION_CANCELLED_ERROR = 6;
-    public static final int PERMISSION_DENIED_ERROR = 20;
     public static final int COLLECT_PAYMENT_REQUEST = 54321;
 
     /**
@@ -61,10 +49,14 @@ public class ConectaRedeCard extends CordovaPlugin {
             Long amount = arg_object.getLong("amount");
             String referenceId = arg_object.getString("referenceId");
             String currencyCode = "BRL";
+            String paymmentType = arg_object.getString("paymentType");
+            int installments = arg_object.getInt("installments");
             Payment payment = new Payment();
             payment.setReferenceId(referenceId);
             payment.setCurrency(currencyCode);
             payment.setAmount(amount);
+            payment.setPaymentType(FlexTipoPagamento.valueOf(paymmentType));
+            payment.setInstallments(installments);
             try {
                 Intent collectPaymentIntent = new Intent(Intents.ACTION_COLLECT_PAYMENT);
                 collectPaymentIntent.putExtra(Intents.INTENT_EXTRAS_PAYMENT, payment);
@@ -78,36 +70,24 @@ public class ConectaRedeCard extends CordovaPlugin {
     }
 
     public void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        if (requestCode == COLLECT_PAYMENT_REQUEST) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (data != null) {
-                    Payment payment = data.getParcelableExtra(Intents.INTENT_EXTRAS_PAYMENT);
-                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                    Type paymentType = new TypeToken<Payment>(){}.getType();
-                    String paymentResult = gson.toJson(payment, paymentType);
-                    this.callbackContext.success(paymentResult);
-                    return;
-                } else {
-                    callbackContext.error(getNoReturn());
-                    return;
-                }
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                callbackContext.error(getErrorString());
+        if (requestCode == COLLECT_PAYMENT_REQUEST && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                Payment payment = data.getParcelableExtra(Intents.INTENT_EXTRAS_PAYMENT);
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                Type paymentType = new TypeToken<Payment>(){}.getType();
+                String paymentResult = gson.toJson(payment, paymentType);
+                this.callbackContext.success(paymentResult);
                 return;
             }
-            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, UNKNOWN_ERROR));
+        } else if (resultCode == Activity.RESULT_CANCELED) {
+            callbackContext.error(getErrorString());
+            return;
         }
     }
 
     private String getErrorString(){
         return "{\n" +
                "    \"status\": \"TRANSACTION_CANCELLED\"\n" +
-               "}";
-    }
-
-    private String getNoReturn() {
-        return "{\n" +
-               "    \"status\": \"TRANSACTION_NO_RETURN\"\n" +
                "}";
     }
 }
